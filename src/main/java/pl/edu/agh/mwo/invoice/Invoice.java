@@ -7,7 +7,7 @@ import java.util.Collection;
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
-    private Collection<Product> products = new ArrayList<>();
+    private final Collection<Product> products = new ArrayList<>();
     BigDecimal subtotal = BigDecimal.ZERO;
     BigDecimal tax = BigDecimal.ZERO;
     BigDecimal total = BigDecimal.ZERO;
