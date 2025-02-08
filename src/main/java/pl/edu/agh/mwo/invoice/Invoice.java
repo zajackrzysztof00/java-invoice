@@ -8,9 +8,9 @@ import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
     private final Collection<Product> products = new ArrayList<>();
-    BigDecimal subtotal = BigDecimal.ZERO;
-    BigDecimal tax = BigDecimal.ZERO;
-    BigDecimal total = BigDecimal.ZERO;
+    BigDecimal subtotal;
+    BigDecimal tax;
+    BigDecimal total;
 
     public void addProduct(Product product) {
         if (product == null) {
@@ -48,6 +48,7 @@ public class Invoice {
     }
 
     public BigDecimal getTotal() {
+        this.total = BigDecimal.ZERO;
         BigDecimal subtotal = this.getSubtotal();
         BigDecimal tax = this.getTax();
         this.total = subtotal.add(tax);
