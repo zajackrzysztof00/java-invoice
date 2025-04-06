@@ -1,7 +1,9 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import pl.edu.agh.mwo.invoice.product.Product;
 
