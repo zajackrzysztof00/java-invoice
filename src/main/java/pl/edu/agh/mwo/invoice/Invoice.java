@@ -74,12 +74,12 @@ public class Invoice {
         for (Product product : this.products) {
             if (countedProducts.containsKey(product)) {
                 int count = (Integer) countedProducts.get(product);
-                countedProducts.replace(product, count+1);
+                countedProducts.replace(product, count + 1);
             } else {
                 countedProducts.put(product, 1);
             }
         }
-        for (Object p: countedProducts.keySet()){
+        for (Object p: countedProducts.keySet()) {
             Product product = (Product) p;
             int count = (Integer) countedProducts.get(p);
             sb.append("\t" + product.getName() + ": " + count + "\n");
