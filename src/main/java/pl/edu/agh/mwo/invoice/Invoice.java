@@ -8,8 +8,8 @@ import java.util.HashMap;
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
-    int invoiceNumber;
-    private final Collection<Product> products = new ArrayList<>();
+    int invoiceNumber = 1;
+    private final HashMap<Product, Integer> products = new HashMap<Product, Integer>();
     BigDecimal subtotal;
     BigDecimal tax;
     BigDecimal total;
@@ -18,7 +18,12 @@ public class Invoice {
         if (product == null) {
             throw new IllegalArgumentException("Product cannot be null");
         }
-        this.products.add(product);
+        if (products.containsKey(product)) {
+            int count = (Integer) products.get(product);
+            products.replace(product, count + 1);
+        } else {
+            products.put(product, 1);
+        }
     }
 
     public void addProduct(Product product, Integer quantity) {
@@ -28,8 +33,11 @@ public class Invoice {
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("Quantity cannot be less than zero");
         }
-        for (int i = 0; i < quantity; i++) {
-            addProduct(product);
+        if (products.containsKey(product)) {
+            int count = (Integer) products.get(product);
+            products.replace(product, count + quantity);
+        } else {
+            products.put(product, quantity);
         }
     }
 
@@ -43,16 +51,24 @@ public class Invoice {
 
     public BigDecimal getSubtotal() {
         this.subtotal = BigDecimal.ZERO;
-        for (Product product : this.products) {
-            this.subtotal = this.subtotal.add(product.getPrice());
+        for (Object p: products.keySet()) {
+            Product product = (Product) p;
+            int quantity = (Integer) products.get(product);
+            product.getPrice().multiply(new BigDecimal(quantity));
+            BigDecimal subtotal = product.getPrice().multiply(new BigDecimal(quantity));
+            this.subtotal = this.subtotal.add(subtotal);
         }
         return this.subtotal;
     }
 
     public BigDecimal getTax() {
         this.tax = BigDecimal.ZERO;
-        for (Product product : this.products) {
-            this.tax = this.tax.add(product.getPrice().multiply(product.getTaxPercent()));
+        for (Object p: products.keySet()) {
+            Product product = (Product) p;
+            int quantity = (Integer) products.get(product);
+            BigDecimal tax = product.getPrice().multiply(product
+                    .getTaxPercent().multiply(new BigDecimal(quantity)));
+            this.tax = this.tax.add(tax);
         }
         return this.tax;
     }
@@ -70,18 +86,9 @@ public class Invoice {
         sb.append("Invoice number: " + invoiceNumber + "\n");
         sb.append("Products:\n");
 
-        HashMap countedProducts = new HashMap<Product, Integer>();
-        for (Product product : this.products) {
-            if (countedProducts.containsKey(product)) {
-                int count = (Integer) countedProducts.get(product);
-                countedProducts.replace(product, count + 1);
-            } else {
-                countedProducts.put(product, 1);
-            }
-        }
-        for (Object p: countedProducts.keySet()) {
+        for (Object p: products.keySet()) {
             Product product = (Product) p;
-            int count = (Integer) countedProducts.get(p);
+            int count = (Integer) products.get(p);
             sb.append("\t" + product.getName() + ": " + count + "\n");
         }
         sb.append("Subtotal: " + subtotal + "\n");
