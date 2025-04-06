@@ -1,12 +1,12 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
+    int invoiceNumber;
     private final Collection<Product> products = new ArrayList<>();
     BigDecimal subtotal;
     BigDecimal tax;
@@ -31,6 +31,14 @@ public class Invoice {
         }
     }
 
+    public int getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(int invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
     public BigDecimal getSubtotal() {
         this.subtotal = BigDecimal.ZERO;
         for (Product product : this.products) {
@@ -53,5 +61,30 @@ public class Invoice {
         BigDecimal tax = this.getTax();
         this.total = subtotal.add(tax);
         return this.total;
+    }
+
+    public String printInvoice() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Invoice number: " + invoiceNumber + "\n");
+        sb.append("Products:\n");
+
+        HashMap countedProducts = new HashMap<Product, Integer>();
+        for (Product product : this.products) {
+            if (countedProducts.containsKey(product)) {
+                int count = (Integer) countedProducts.get(product);
+                countedProducts.replace(product, count+1);
+            } else {
+                countedProducts.put(product, 1);
+            }
+        }
+        for (Object p: countedProducts.keySet()){
+            Product product = (Product) p;
+            int count = (Integer) countedProducts.get(p);
+            sb.append("\t" + product.getName() + ": " + count + "\n");
+        }
+        sb.append("Subtotal: " + subtotal + "\n");
+        sb.append("Tax: " + tax + "\n");
+        sb.append("Total: " + total + "\n");
+        return sb.toString();
     }
 }
